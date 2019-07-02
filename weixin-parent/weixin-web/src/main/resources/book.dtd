@@ -1,4 +1,0 @@
-<!ELEMENT book (author,title,description)>
-<!ELEMENT author (#PCDATA)>
-<!ELEMENT title  (#PCDATA)>
-<!ELEMENT description (#PCDATA)>
