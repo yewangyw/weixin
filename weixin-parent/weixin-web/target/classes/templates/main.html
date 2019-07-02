@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link href="#" th:href="@{/webjars/layui/2.4.5/css/layui.css}" rel="stylesheet">
+
+
+</head>
+<body>
+
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md3">
+            <img src="#" alt="二维码" th:src="${imageCodeUrl}" th:width="280px" th:height="280px">
+        </div>
+        <div class="layui-col-md9">
+
+            <table class="layui-table">
+                <tr>
+                    <th>序号</th>
+                    <th>用户昵称</th>
+                    <th>图像</th>
+                    <th>是否关注</th>
+                    <th>关注时间</th>
+                    <th colspan="2">详细资料</th>
+                </tr>
+
+                <tr th:each="user,status:${uesrList}">
+                    <td th:text="${status.index+1}"></td>
+                    <td th:text="${user.nickname}"></td>
+                    <td><img src="#" alt="图像" th:src="${user.headimgurl}" style="height: 50px"></td>
+                    <td th:text="${user.subscribe}"></td>
+                    <td th:text="${user.subscribe_time}"></td>
+                    <td>
+                        <input type="hidden" value="1" th:value="${user.openid}">
+                        <button class="layui-btn" name="sendMsg">发送消息</button>
+                    </td>
+                    <td>
+                        <button class="layui-btn layui-btn-primary">详细信息</button>
+                    </td>
+                </tr>
+
+            </table>
+
+
+        </div>
+    </div>
+</div>
+<!--发送消息-->
+<form class="layui-form" action="" style="display: none" id="msg_form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">收件人</label>
+        <div class="layui-input-block">
+            <input type="text" name="touser" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input" readonly="readonly">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">消息类型</label>
+        <div class="layui-input-block">
+            <select name="msgtype" lay-verify="required">
+                <option value=""></option>
+                <option value="text">文本消息</option>
+                <option value="news">图文消息</option>
+
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">消息内容</label>
+        <div class="layui-input-block">
+            <textarea name="msgBody" placeholder="请输入内容" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">图文标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input" >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图片地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="picurl" required  lay-verify="required" placeholder="请输入图片地址" autocomplete="off" class="layui-input" >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图文地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="url" required  lay-verify="required" placeholder="图文地址" autocomplete="off" class="layui-input" >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图文描述</label>
+        <div class="layui-input-block">
+            <input type="text" name="description" required  lay-verify="required" placeholder="图文描述" autocomplete="off" class="layui-input" >
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" id="sendBtn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+
+
+<script src="../layui/layui.js" th:src="@{/webjars/layui/2.4.5/layui.all.js}"></script>
+<script>
+    //一般直接写在一个js文件中
+    layui.use(['layer', 'form','jquery'], function () {
+        var layer = layui.layer
+            , form = layui.form,
+            $ = layui.$;
+
+        $("[name='sendMsg']").click(function () {
+
+          var openId =   $(this).prev().val();
+          //layer.msg(openId);
+          $('[ name="touser"]').val(openId);
+
+
+            layer.open({
+                type: 1,
+                content: $('#msg_form'), //这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+                area: ['500px','350px']
+            });
+        });
+
+
+        //$("#sendBtn").click(function () {
+
+            $("#msg_form").submit(function () {
+
+                //1.发起 ajax 请求
+               // alert("----");
+                $.get("/wx/send/kfmsg",$("#msg_form").serialize(),function (flag) {
+                    if(flag)
+                    {
+                        layer.msg("发送成功，请注意查收!")
+                        layer.closeAll();
+                    }
+                    else{
+                        layer.msg("发送失败!联系管理员!")
+                    }
+
+                })
+
+                return false;
+            });
+
+
+        //});
+
+
+
+       // layer.msg('Hello World');
+    });
+</script>
+
+</body>
+</html>

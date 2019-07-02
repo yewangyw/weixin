@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE book SYSTEM "book.dtd">
+
+<!--dtd:规范xml文件-->
+
+<book>
+<author>路遥</author>
+<title>平凡的世界</title>
+<description>洗脑神作</description>
+</book>
